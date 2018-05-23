@@ -1,0 +1,38 @@
+body {
+				background:#E0E0E0;
+				color: #363636;
+				font-family: arial;
+			}
+
+			/* Let's change the color of our h1 tag */
+			h1 {
+				color:rgb(5, 0, 1);
+				font-size:50px;
+				margin:0;
+				text-shadow:1px 1px 0 #fff;
+			}
+
+			/* Make our h3 normal */
+			h3 {
+				font-style:italic;
+			}
+
+			/* p targets all paragraphs, change the colour of the element to blue */
+			p {
+				line-height:30px;
+			}
+
+			/* We have a div with the class of "wrapper", lets style it a little. (Don't worry we will learn more about classes soon!) */
+			.wrapper {
+				padding:50px;
+				margin:20px auto;
+				width:650px;
+				background:white;
+				border:1px solid rgb(1, 0, 5);
+			}
+
+
+			.description img {
+				float:left;	
+				padding-right:30px;
+			}

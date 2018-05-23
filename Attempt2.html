@@ -1,0 +1,277 @@
+<!--HTML-->
+
+<html>
+  <!--CSS-->
+  <link rel="stylesheet" href="Styles.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+ 
+  <div id='Intro'>
+  <head>
+ <h1>
+  Machine Learning Interpretability Study
+ </h1>
+</head>
+  <h3>Details</h3>
+  <p>
+    Thank you for participating in our study. It has been approved by ethics committee... </br>
+    The purpose of the study is the ascertain users' comfort with different machine learning models given various forms of evidence, interpretations, and representations.
+  </p>
+    <h3>Instructions:</h3>
+  <p>
+    Please assess your level of comfort utilizing the models described to the best of your ability after each question, and answer the comprehension question at the end of each section.
+  </p>
+ </div>
+ <div id = 'Rest'></div>
+ <div class = 'finished'>
+     <h3>Finished!!!</h3>
+    <p>
+        Thank you very much for taking our quiz. Your anonymous results will be used in a model that shall determine the best evidence to present to potential users of ML models.
+    </p>
+</div>
+ 
+<!--CODE-->
+<!--Download jQuery-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+<!--Actual code-->
+  <script>
+    //Setup variables:
+
+    
+    var part1 = {
+        header : '<b>Part 1:</b> Background',
+        description : 'This question identifies YOUR background',
+        questions : [
+            {
+                questionText : '<b>Please indicate your program and level of study:</b>',
+                answers : ['Medical (or related), Undergraduate',
+                'Medical (or related), Postgraduate',
+                'Mathematics, Statistics, Computer Science (or related), Undergraduate',
+                'Mathematics, Statistics, Computer Science (or related), Postgraduate',
+                'Other'
+                ]
+            }
+        ],
+        probs: [1]
+    };
+    var part2 = {
+        header : '<b>Part 2:</b> Linear Model',
+        description : 'The following questions pertain to a linear regression model that uses various features to predict X.<br />Please examine the following in order and assess your level of comfort of utilizing the model for predictive purposes after each step.',
+        questions : [
+            {
+                questionText : 'The top feature of the model is age, with corresponding coefficient 2.67 [and a significance measure of...].Given this and previous information, how comfortable would you feel using the model for predictive purposes?',
+                answers: ['Not at all comfortable, will not consult model',
+                            'Not very comfortable, unlikely to consult model',
+                            'Somewhat comfortable, may consult model but unlikely to rely on it',
+                            'Fairly comfortable, likely to consult model',
+                            'Very comfortable, almost certain to consult model together with other tools'
+                ]
+            },
+            {
+                questionText : 'The 5 top features of the model and their corresponding coefficients are... <br />Given this and previous information, how comfortable would you feel using the model for predictive purposes?',
+                answers : ['Not at all comfortable, will not consult model',
+                            'Not very comfortable, unlikely to consult model',
+                            'Somewhat comfortable, may consult model but unlikely to rely on it',
+                            'Fairly comfortable, likely to consult model',
+                            'Very comfortable, almost certain to consult model together with other tools'
+                ]
+            }
+        ],
+        probs : [0.5,0.5]
+    };
+
+    var part3 = {
+        header : '<b>Comprehension Question</b>',
+        description : '<p>The following question will test your understanding of the Linear Model described previously.<br /> A patient exhibits the following:<br />- Age - X<br />- Feature a<br />- Feature b...</p>',
+        questions : [
+            {
+                questionText : 'Based on the above, what would you expect the model to predict?',
+                answers : ['Low Risk',
+                'Medium Risk',
+                'High Risk',
+                'I am not sure'
+                ]
+            }
+        ],
+        probs: [1]
+    };
+
+    var parts = [part1, part2, part3];
+
+    var questionCounter = 0;
+    var sectionCounter = 0;
+
+    //Create function to display a question:
+    function displayQuestion(qNum, q)
+    {
+        var output = [];
+        var answersList = [];
+
+        //Setup answers one by one
+        for(ans in q.answers)
+        {
+            answersList.push(
+                '<label class="question question'+qNum+'">'
+					+ '<input type="radio" name="question'+qNum+'" class="question'+qNum+'" value="'+ans+'">'
+					+ (ans) + ': '
+					+ q.answers[ans]
+				+ '</label><br />'
+			    );
+		}
+
+        //Push question text and answers
+        output.push(
+			'<div class="question question'+qNum+'">' + q.questionText + '<br />'
+			+ '<div class="answers">' + answersList.join('') + '<br /></div>'
+            + '<div value="'+qNum+'" class="button question question'+qNum+'"><button>Next</button></div></div>'
+		);
+        //console.log(output)
+
+        //Add output to current HTML
+        return output;
+    }
+
+    function displaySection(sectionNum,section)
+    {
+        output = [];
+        questionList = [];
+
+        //Choose which questions to display by probability
+        for(var q=0; q<section.questions.length; q++)
+        {
+           questionList.push(displayQuestion(questionCounter,section.questions[q]));
+           questionCounter++;
+        }
+        
+        //Add question list to output and return
+        output.push(
+            '<div class="section section'+sectionNum+'"><h3>' 
+            + section.header 
+            +'</h3><p>'
+            + section.description
+            + '</p>'
+            + '<div class="questions">' + questionList.join('') + '</div></div>'
+        );
+
+        return output;
+    }
+
+    function displayAll(sectionList)
+    {
+        output = ''
+        for(var s = 0; s<sectionList.length;s++)
+        {
+            output = output+displaySection(sectionCounter,sectionList[s]);
+            sectionCounter++;
+        }
+        return output
+    }
+
+    //Variable to store data:
+    dataReturn = []
+
+    //Set code to run once page is loaded
+    $(document).ready(function() {
+        var pageStuff = document.getElementById('Rest');
+        //q = displayQuestion(1,part1.questions[0]);
+        //s = displaySection(1,part2);
+        t = displayAll(parts);
+        pageStuff.innerHTML = pageStuff.innerHTML + t;
+
+        console.log(pageStuff.innerHTML);
+
+        //All the action starts here!
+
+        //Hide all questions and sections:
+        $('.question').hide();
+        $('.section').hide();
+        $('.finished').hide();
+
+        //Display the first only to start with
+        $('.section0').show();
+        $('.question0').show();
+
+        //Keep track of what's been answered
+        var clicked = 0;
+        var questionsInSection = 0;
+        var sectionsPassed = 0;
+
+        //On click
+        $('.button').on('click', function() {
+            var foundNextQuestion = false;
+            var round = 0;
+
+            //While we haven't settled on a question to display
+            while(foundNextQuestion == false)
+            {
+                //Check which question and section we're in
+                currentQuestion = '.question'+clicked;
+                currentSection = '.section'+sectionsPassed;
+
+                //Get the answer, if the user just answered. Otherwise log -1:
+                if(round == 0)
+                {
+                    userAnswer = $(':checked',currentQuestion).val();
+                }
+                else
+                {
+                    userAnswer = -1;
+                }
+                console.log(userAnswer);
+                dataReturn.push(userAnswer);
+
+                //Check if we're in a new section
+                questionsInSection++;
+                if (questionsInSection==parts[sectionsPassed].questions.length)
+                {
+                    sectionsPassed++;
+                    questionsInSection = 0;
+
+                    $(currentSection).hide();
+                    currentSection = '.section'+sectionsPassed;
+                    $(currentSection).show();
+                }
+
+                //Check if there is a next question
+                clicked++;
+                nextQuestion = '.question'+clicked;
+
+                //If not, display finished and exit loop:
+                if(clicked==questionCounter)
+                {
+                    $('.finished').show();
+                    console.log(dataReturn)
+                    foundNextQuestion = true;
+                }
+
+                //Otherwise, grab the corresponding probability for the next question:
+                else
+                {
+                    currentProb = parts[sectionsPassed].probs[questionsInSection];
+            
+                    //Generate a random number
+                    randomNumber = Math.random();
+                
+                    //Now, probabilistically, if we're at a success we'll display next question and exit loop
+                    if(randomNumber <= currentProb)
+                    {
+                        $(currentQuestion).hide();
+                        $(nextQuestion).show();
+                        foundNextQuestion = true;
+                    }
+
+                    //Otherwise, we just increase the round number and loop over to look for the next question
+                    
+                }
+
+                round++;
+            }
+                        
+        })
+    })
+  </script>
+
+
+  </script>
+
+</html>
